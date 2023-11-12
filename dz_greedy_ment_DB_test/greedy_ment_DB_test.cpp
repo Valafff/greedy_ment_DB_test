@@ -5,7 +5,9 @@
 #include<conio.h>
 #include<vector>
 #include <map>
-#include <algorithm>
+#include<fstream>
+
+//#include <algorithm>
 //#include "menu.h"
 using namespace std;
 
@@ -539,7 +541,7 @@ void printMenu(vector<string>masMenu, int punct, int X, int Y)
 
 int KlacKlac_v1_5(vector<string>masMenu, int X, int Y)
 {
-	int quit = -1;
+	int quit = 0;
 	int menupoint = 0;
 	int key;
 	do
@@ -572,7 +574,7 @@ int KlacKlac_v1_5(vector<string>masMenu, int X, int Y)
 		{
 			return menupoint;
 		}
-	} while (key != Esc);
+	} while (key != esc);
 	return quit;
 }
 
@@ -639,15 +641,15 @@ string random_auto_number()
 	int default_number_length = 3;
 	string resultName;
 	size_t number;
-	vector <string> liter{ "а", "б", "в", "г", "д", "е", "ж", "х", "з", "и", "к", "л", "м", "н" };
+	//vector <string> liter{ "а", "б", "в", "г", "д", "е", "ж", "х", "з", "и", "к", "л", "м", "н" };
 
-	resultName = liter[rand() % liter.size()];
+	//resultName = liter[rand() % liter.size()];
 	for (size_t i = 0; i < default_number_length; i++)
 	{
 		resultName.append(to_string(number = rand() % 10));
 	}
-	resultName.append(liter[rand() % liter.size()]);
-	resultName.append(liter[rand() % liter.size()]);
+	//resultName.append(liter[rand() % liter.size()]);
+	//resultName.append(liter[rand() % liter.size()]);
 	return resultName;
 }
 string random_string_penalty()
@@ -704,6 +706,13 @@ public:
 	{
 		auto_number = id;
 	}
+
+	Happy_driver(string id, const string arg_pentype)
+	{
+		auto_number = id;
+		Happy_letters.emplace_back(Happy_Latter(Happy_letters.size() + 1, arg_pentype, 0));
+	}
+
 	Happy_driver(string id, const string arg_pentype, int arg_fine)
 	{
 		auto_number = id;
@@ -714,6 +723,11 @@ public:
 	{
 		auto_number = arg_number;
 	}
+	//Для вставки из файла
+	void set_Penalties(const string arg_penalt)
+	{
+		Happy_letters.emplace_back(Happy_Latter(Happy_letters.size() + 1, arg_penalt, random_fine()));
+	}
 	string get_Auto_number()
 	{
 		return auto_number;
@@ -723,8 +737,26 @@ public:
 	{
 		for (Happy_Latter var : Happy_letters)
 		{
-			cout << "Номер квитанции: " << var.get_Penalty_number() << "\tНарушение: " << var.get_Penalty_type(); /*<< "\tШтраф: " << var.get_Fine();*/
+			cout << "Номер квитанции: " << var.get_Penalty_number() << "\tНарушение: " << var.get_Penalty_type() << endl; /*<< "\tШтраф: " << var.get_Fine();*/
 		}
+	}
+
+	void file_get_Penalty_types(ofstream& arg_stream)
+	{
+		for (Happy_Latter var : Happy_letters)
+		{
+			arg_stream << "Номер квитанции: " << var.get_Penalty_number() << "\tНарушение: " << var.get_Penalty_type(); /*<< "\tШтраф: " << var.get_Fine();*/
+
+		}
+
+		//for (size_t i = 0; i < Happy_letters.size(); i++)
+		//{
+		//	arg_stream << "Номер квитанции: " << Happy_letters[i].get_Penalty_number() << "\tНарушение: " << Happy_letters[i].get_Penalty_type();
+		//	if (i < Happy_letters.size())
+		//	{
+		//		arg_stream << endl;
+		//	}
+		//}
 	}
 	string get_Penalty(const int index)
 	{
@@ -732,9 +764,13 @@ public:
 	}
 
 
-	void set_Penalty(const string arg_pentype, int arg_fine)
+	void set_random_Penalty()
 	{
 		Happy_letters.emplace_back(Happy_Latter(Happy_letters.size() + 1, random_string_penalty(), random_fine()));
+	}
+	void set_Penalty(const string arg_penalt)
+	{
+		Happy_letters.emplace_back(Happy_Latter(Happy_letters.size() + 1, arg_penalt, random_fine()));
 	}
 	friend string random_auto_number();
 	friend int random_fine();
@@ -762,7 +798,7 @@ int main()
 	menu.setCount_Y_Slots(2, 0);
 
 	menu.setName_Y_list(0, 0, "Вывести список нарушителей");
-	menu.setName_Y_list(0, 1, "Вывести список нарушителей по номеру");
+	menu.setName_Y_list(0, 1, "Вывести список нарушений по номеру");
 	menu.setName_Y_list(0, 2, "Вывести список нарушителей по диапазону номеров");
 	menu.setName_Y_list(0, 3, "Выгрузкаданных в файл");
 
@@ -771,30 +807,23 @@ int main()
 	menu.setName_Y_list(1, 2, "Загрузить квитанции из файла");
 	menu.setName_Y_list(1, 3, "Удалить квитанцию");
 
-
 	// Переменные меню
 	size_t select(0);
 	size_t lastmenu(0);
 	size_t lastmenu_Y(0);
 	bool flag(false);
 
-
 	int def_size = 10;
 	int temp;
 
 	string search;
+
 #endif // MENU_SETTINGS
 
-	Happy_driver temp_happy_driver;
-	string temp_number;
-	string temp_penalty;
 	vector <string> penalty_types{ "Выезд на встречную полосу","Превышение скорости на 20 км/час","Езда без пристегнутого ремня","Езда в нетрезвом виде","Превышение скорости на 40 км/час","Двойной обгон" };
-
-
-
-
 	map <string, Happy_driver>penalty_DB;
 	map <string, Happy_driver> ::iterator it;
+
 
 	do
 	{
@@ -803,48 +832,109 @@ int main()
 		// Вывести список нарушителей
 		if (select == 101)
 		{
-
 			for (it = penalty_DB.begin(); it != penalty_DB.end(); it++)
 			{
-				cout << "Ключ\\Номер: " << it->first << "\t";
-				it->second.get_Penalty_types(); cout << " " << curren_fine(it->second.get_Penalty(0));;
+				cout << "Ключ\\Номер:" << it->first << "\n";
+				it->second.get_Penalty_types(); /*cout << " Штраф: " << curren_fine(it->second.get_Penalty(0));*/
 				cout << endl;
 			}
-
 		}
 		// Вывести список нарушителей по номеру
 		if (select == 102)
 		{
 			cout << "Введите номер: ";
-			getline(cin, search);
+			cin >> search;
+			//getline(cin, search);
+
+			if (penalty_DB.find(search) != penalty_DB.end())
+			{
+				penalty_DB[search].get_Penalty_types();
+			}
+			else
+			{
+				cout << "Номер не найден!";
+			}
 		}
 		// Вывести список нарушителей по диапазону номеров
 		if (select == 103)
 		{
+			int start_id;
+			int end_id;
+			bool driver_is = false;
+			do
+			{
+				cout << "Введите начальную границу интервала поиска: ";
+				cin >> start_id;
+				cout << "Введите конечную границу интервала поиска: ";
+				cin >> end_id;
+
+			} while (!(start_id < end_id and start_id >= 0 and end_id >= 0));
+
+
+			for (it = penalty_DB.begin(); it != penalty_DB.end(); it++)
+			{
+				if (stoi(it->first) >= start_id and stoi(it->first) <= end_id)
+				{
+					cout << "Ключ\\Номер:" << it->first << "\n";
+					it->second.get_Penalty_types(); /*cout << " Штраф: " << curren_fine(it->second.get_Penalty(0));*/
+					cout << endl;
+					driver_is = true;
+				}
+			}
+			if (!driver_is)
+			{
+				cout << "Номера не найдены!";
+			}
+
 
 		}
 		// Выгрузкаданных в файл
 		if (select == 104)
 		{
-
+			ofstream to_file("happy_drivers.txt", ios::app);
+			if (to_file.is_open())
+			{
+				for (it = penalty_DB.begin(); it != penalty_DB.end(); it++)
+				{
+					if (it != penalty_DB.begin())
+					{
+						to_file << "\n";
+					}
+					to_file << "Ключ\\Номер: " << it->first << "\t";
+					it->second.file_get_Penalty_types(to_file); /*cout << " Штраф: " << curren_fine(it->second.get_Penalty(0));*/
+					//to_file << endl;
+				}
+			}
+			else
+			{
+				cout << "file not read" << endl;
+			}
+			to_file.close();
 		}
 
 		//Добавить новую квитанцию
 		if (select == 201)
 		{
+			Happy_driver temp_happy_driver;
+			string temp_number;
+			string temp_penalty;
 
-			//setCursor(0, 10);
 			cout << "Введите номер: ";
 			cin >> temp_number;
 			cout << "Выберите нарушение: ";
-			system("pause");
-			temp_penalty = penalty_types[KlacKlac_v1_5(penalty_types, 0, 10)];
-
-
+			temp_penalty = penalty_types[KlacKlac_v1_5(penalty_types, 0, 9)];
 			temp_happy_driver.set_Auto_number(temp_number);
+			temp_happy_driver.set_Penalty(temp_penalty);
 
-
-
+			if (penalty_DB.find(temp_number) == penalty_DB.end())
+			{
+				penalty_DB.insert(make_pair(temp_happy_driver.get_Auto_number(), temp_happy_driver));
+			}
+			else
+			{
+				penalty_DB[temp_number].set_Penalty(temp_penalty);
+			}
+			cleanZone(0, 6, 20, 110);
 		}
 		// Сгенерировать случайные квитанции
 		if (select == 202)
@@ -861,7 +951,55 @@ int main()
 		//Загрузить квитанции из файла
 		if (select == 203)
 		{
+			string temp_number;
+			string last_temp_number{};
+			string var{};
+			string temp_penalty{};
 
+			ifstream from_file("happy_drivers.txt");
+			if (from_file.is_open())
+			{
+				while (!from_file.eof())
+				{
+
+					from_file >> temp_number;
+					//cout << temp_number << "\n";
+					if (temp_number == "Ключ\\Номер:" or last_temp_number == "Ключ\\Номер:")
+					{
+						last_temp_number = "";
+						from_file >> temp_number;
+						var = temp_number;
+					}
+					if (temp_number == "Нарушение:")
+					{
+						temp_penalty = "";
+						while (temp_number != "Ключ\\Номер:")
+						{
+							from_file >> temp_number;
+							if (temp_number == "Ключ\\Номер:")
+							{
+								last_temp_number = temp_number;
+								break;
+							}
+							temp_penalty += temp_number;
+							temp_penalty += " ";
+							if (from_file.eof())
+							{
+								//temp_happy_driver.set_Penalty(temp_penalty);
+								break;
+							}
+						}
+						//cout << temp_penalty;
+						penalty_DB.emplace(make_pair(var, Happy_driver(var, temp_penalty)));
+						//_getch();
+					}
+				}
+			}
+			else
+			{
+				cout << "file not read" << endl;
+			}
+			from_file.close();
 		}
 		// Удалить квитанцию
 		if (select == 204)
