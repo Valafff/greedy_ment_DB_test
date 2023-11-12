@@ -1,5 +1,4 @@
-﻿// ДЗ с 510 строки
-#include <iostream>
+﻿#include <iostream>
 #include <time.h>
 #include <Windows.h>//	Sleep;
 #include <string>
