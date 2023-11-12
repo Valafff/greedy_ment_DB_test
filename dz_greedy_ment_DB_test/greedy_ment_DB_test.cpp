@@ -11,6 +11,7 @@ using namespace std;
 
 #define MYMENU
 #define MENU_SETTINGS
+#define SUB_MENU
 
 enum Color
 {
@@ -515,6 +516,69 @@ void formatPrint(const size_t col_size, const string& originalstr)
 }
 #endif // MYMENU
 
+#ifdef SUB_MENU
+
+//функция для вывода меню на экран на координатах, активный пункт меню выводит другим цветом
+void printMenu(vector<string>masMenu, int punct, int X, int Y)
+{
+	for (size_t i = 0; i < masMenu.size(); i++)
+	{
+		if (i == punct)
+		{
+			setColor(Red, Black);
+		}
+		else
+		{
+			setColor(White, Black);
+		}
+		setCursor(X, Y + i);
+		cout << masMenu[i];
+	}
+	setColor(White, Black);
+}
+
+int KlacKlac_v1_5(vector<string>masMenu, int X, int Y)
+{
+	int quit = -1;
+	int menupoint = 0;
+	int key;
+	do
+	{
+		printMenu(masMenu, menupoint, X, Y);
+		key = _getch();
+		if (key == Down)
+		{
+			if (menupoint < masMenu.size())
+			{
+				menupoint++;
+			}
+			if (menupoint == masMenu.size())
+			{
+				menupoint = 0;
+			}
+		}
+		if (key == Up)
+		{
+			if (menupoint >= 0)
+			{
+				menupoint--;
+			}
+			if (menupoint == -1)
+			{
+				menupoint = masMenu.size() - 1;
+			}
+		}
+		if (key == Enter)
+		{
+			return menupoint;
+		}
+	} while (key != Esc);
+	return quit;
+}
+
+#endif // SUB_MENU
+
+
 /*
 Реализовать базу данных ГАИ по штрафным квитанциям с помощью бинарного дерева. Ключом будет служить
 номер автомашины, значением узла — список право- нарушений. Если квитанция добавляется в первый
@@ -655,7 +719,7 @@ public:
 		return auto_number;
 	}
 
-	void get_Penalty_rypes()
+	void get_Penalty_types()
 	{
 		for (Happy_Latter var : Happy_letters)
 		{
@@ -721,12 +785,15 @@ int main()
 	string search;
 #endif // MENU_SETTINGS
 
+	Happy_driver temp_happy_driver;
+	string temp_number;
+	string temp_penalty;
+	vector <string> penalty_types{ "Выезд на встречную полосу","Превышение скорости на 20 км/час","Езда без пристегнутого ремня","Езда в нетрезвом виде","Превышение скорости на 40 км/час","Двойной обгон" };
 
-	//vector <string> auto_numbers;
+
 
 
 	map <string, Happy_driver>penalty_DB;
-
 	map <string, Happy_driver> ::iterator it;
 
 	do
@@ -740,7 +807,7 @@ int main()
 			for (it = penalty_DB.begin(); it != penalty_DB.end(); it++)
 			{
 				cout << "Ключ\\Номер: " << it->first << "\t";
-				it->second.get_Penalty_rypes(); cout << " " << curren_fine(it->second.get_Penalty(0));;
+				it->second.get_Penalty_types(); cout << " " << curren_fine(it->second.get_Penalty(0));;
 				cout << endl;
 			}
 
@@ -766,8 +833,20 @@ int main()
 		if (select == 201)
 		{
 
+			//setCursor(0, 10);
+			cout << "Введите номер: ";
+			cin >> temp_number;
+			cout << "Выберите нарушение: ";
+			system("pause");
+			temp_penalty = penalty_types[KlacKlac_v1_5(penalty_types, 0, 10)];
+
+
+			temp_happy_driver.set_Auto_number(temp_number);
+
+
+
 		}
-		// Сгенерировать случайные квитанции =)))))
+		// Сгенерировать случайные квитанции
 		if (select == 202)
 		{
 			cout << "Сколько водителей требуется осчастливить? ";

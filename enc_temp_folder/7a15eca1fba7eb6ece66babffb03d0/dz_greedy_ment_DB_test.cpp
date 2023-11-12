@@ -993,13 +993,23 @@ int main()
 						penalty_DB.emplace(make_pair(var, Happy_driver(var, temp_penalty)));
 						//_getch();
 					}
+
+
 				}
+
 			}
 			else
 			{
 				cout << "file not read" << endl;
 			}
 			from_file.close();
+
+
+
+
+
+
+
 		}
 		// Удалить квитанцию
 		if (select == 204)
